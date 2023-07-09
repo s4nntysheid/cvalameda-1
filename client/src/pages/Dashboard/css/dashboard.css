@@ -1,0 +1,43 @@
+h1 {
+    padding: 5px;
+    background-color: #7b7b7b;
+}
+
+p {
+    margin: 0;
+}
+
+.chart{
+    max-height: 200px;
+    margin: 20px 30px;
+}
+
+.chart-container{
+    height: 300px;
+    background-color: #fff5f2;
+    border-radius: 15px;
+}
+
+.row {
+    margin-left: 0;
+    margin-left: 0;
+}
+
+.counters {
+    width: 450px;
+    background-color: #fff5f2;
+    border-radius: 15px;
+}
+
+.counter {
+    margin: 10px 15px;
+}
+
+.new-user-span>* {
+    color: white;
+    
+}
+
+a:-webkit-any-link {
+    text-decoration: none !important;
+}

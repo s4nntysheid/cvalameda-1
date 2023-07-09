@@ -1,0 +1,11 @@
+.anychart-ui-support > g:first-of-type > g:first-of-type > g:first-of-type > path:first-of-type {
+    fill: #fff5f2;
+}
+
+.anychart-ui-support {
+    border-radius: 15px;
+}
+
+.anychart-credits-text, .anychart-credits-logo{
+    display: none;
+}
