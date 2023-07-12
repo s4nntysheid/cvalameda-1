@@ -34,7 +34,7 @@ function NewVoluntario({closeModal, volunteer}) {
   const [areas, setAreas] = useState(volunteer?.area || ["Qualidade"]);
   const [interviews, setInterviews] = useState([]);
 
-  const PhoneMask = "(00) 0 0000-0000";
+  const PhoneMask = "(00) 9 0000-0000";
   const EmailMask = /^\S*@?\S*$/;
 
   const navigate = useNavigate();
@@ -42,7 +42,7 @@ function NewVoluntario({closeModal, volunteer}) {
   const handleOnSubmit = async (e) => {
     e.preventDefault();
 
-    var result = await fetch("/voluntary", {
+    var result = await fetch("/api/newvolunteer", {
       method: "POST",
       body: JSON.stringify({
         nome: name.current.value,

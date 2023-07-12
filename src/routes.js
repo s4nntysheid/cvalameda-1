@@ -75,7 +75,7 @@ routes.post("/authenticate", (req, res) => {
 
 routes.post("/volunteers", VoluntarioController.getAllVolunteers);
 
-routes.post("/newvoluntary", VoluntarioController.createNewVolunteer);
+routes.post("/newvolunteer", VoluntarioController.createNewVolunteer);
 
 /* routes.post("/areas")
 
@@ -119,10 +119,6 @@ routes.post("/login", async (req, res) => {
     res.json({ success: false, error: "Complete todos os espaços!" });
   } else {
     try {
-      User.find().then((data) => {
-        console.log({name: data[0].name, pass: data[0].pass});
-        console.log(req.body)
-      })
       User.findOne({ name: req.body.name })
         .then((user) => {
           
