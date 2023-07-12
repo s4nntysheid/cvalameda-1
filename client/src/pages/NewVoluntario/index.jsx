@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { cloneElement, useRef, useState } from "react";
 import DatePicker, { registerLocale, setDefaultLocale } from "react-datepicker";
 import { Link, useNavigate } from "react-router-dom";
 import { default as ptBR } from "date-fns/esm/locale/pt-BR";
@@ -12,55 +12,52 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 import "./css/newvoluntario.css";
 
-function NewVoluntario() {
+function NewVoluntario({closeModal, volunteer}) {
   registerLocale("pt-BR", ptBR);
   setDefaultLocale("pt-BR");
+  
+  const [areasList, setAreasList] = useState(["Qualidade", "Liderança", "Intercessão", "Comunicação", "Fotografia", "Stories", "Recepção", "Libertação", "Integração", "Libras", "Kids", "Acessível", "Trânsito", "Líder"]);
+  
 
-  const [nome, setNome] = useState("");
-  const [sexo, setSexo] = useState("");
-  const [nascimento, setNascimento] = useState("");
-  const [idade, setIdade] = useState(0);
-  const [numero, setNumero] = useState("");
-  const [email, setEmail] = useState("");
-  const [celula, setCelula] = useState("");
-  const [b, setB] = useState(false);
-  const [d, setD] = useState(false);
-  const [cdo, setCdo] = useState(false);
-  const [area, setArea] = useState([]);
+  //dados do usuário
+  const name = useRef(null);
+  const gender = useRef(null);
+  const birthday = useRef(null);
+  const cellphone = useRef(null);
+  const email = useRef(null);
+  const smallgroup = useRef(null);
+  const member = useRef(null);
+  const baptized = useRef(null);
+  const escola = useRef(null);
+  const cdo = useRef(null);
+  const dna = useRef(null);
+  const [areas, setAreas] = useState(volunteer?.area || ["Qualidade"]);
+  const [interviews, setInterviews] = useState([]);
 
   const PhoneMask = "(00) 0 0000-0000";
   const EmailMask = /^\S*@?\S*$/;
-
-  const getAreas = () => {
-    const areas = [];
-
-    const areaChecks = document.getElementsByName("area");
-    for (var i = 0; i < areaChecks.length; i++) {
-      if (areaChecks[i].checked) areas.push(areaChecks[i].value);
-    }
-    setArea([areas]);
-    return areas;
-  };
 
   const navigate = useNavigate();
 
   const handleOnSubmit = async (e) => {
     e.preventDefault();
 
-    var result = await fetch("/newvoluntary", {
+    var result = await fetch("/voluntary", {
       method: "POST",
       body: JSON.stringify({
-        nome: nome,
-        nascimento: nascimento,
-        idade: idade,
-        sexo: sexo,
-        numero: numero,
-        email: email,
-        celula: celula,
-        b: b,
-        d: d,
-        cdo: cdo,
-        area: getAreas(),
+        nome: name.current.value,
+        sexo: gender.current.value,
+        nascimento: birthday.current.value,
+        numero: cellphone.current.value,
+        email: email.current.value,
+        celula: smallgroup.current.value,
+        membro: member.current.value,
+        batizado: baptized.current.value,
+        escola: escola.current.value,
+        cdo: cdo.current.value,
+        dna: dna.current.value,
+        areas: areas,
+        entrevistas: interviews,
       }),
       headers: {
         "Content-Type": "application/json",
@@ -70,7 +67,7 @@ function NewVoluntario() {
     let jsonResult = await result;
     console.log(jsonResult);
     if (jsonResult) {
-      console.log(area);
+      console.log(areas);
       navigate("/");
       window.location.reload();
     } else {
@@ -78,343 +75,237 @@ function NewVoluntario() {
     }
   };
 
-  return (
-    <>
-      <div className="dashboard-content-header">
-        <h2>Novo Voluntario</h2>
-      </div>
-      <form className="d-flex align-items-center newvolunt-form" method="post">
-        <div className="form-container">
-          <div className="form-row row">
-            <div className="form-group col-md">
-              <label htmlFor="nome">Nome</label>
-              <input
-                type="text"
-                className="form-control"
-                name="nome"
-                id="nome"
-                placeholder="Nome"
-                value={nome}
-                onChange={(e) => setNome(e.target.value)}
-                required
-              />
-            </div>
-            <div className="form-group col-md">
-              <label htmlFor="sexo">Sexo</label>
-              <select
-                name="sexo"
-                id="sexo"
-                className="form-control"
-                value={sexo}
-                required
-                onChange={(e) => {
-                  setSexo(e.target.value);
-                  console.log(e.target.value);
-                }}
-              >
-                <option defaultValue>Escolha...</option>
-                <option>Masculino</option>
-                <option>Feminino</option>
-              </select>
-            </div>
-          </div>
-          <div className="form-row row mt-4">
-            <div className="form-group col-sm-3">
-              <label htmlFor="nascimento">Nascimento</label>
-              <DatePicker
-                placeholderText="DD/MM/AAAA"
-                id="nascimento"
-                name="nascimento"
-                className="form-control"
-                selected={nascimento}
-                onChange={(date) => setNascimento(date)}
-              />
-            </div>
-            {/* <div className="form-group col-sm-2">
-              <label htmlFor="idade">Idade</label>
-              <input
-                type="number"
-                className="form-control"
-                name="idade"
-                id="idade"
-                placeholder="Idade"
-                value={idade}
-                onChange={(e) => setIdade(e.target.value)}
-              />
-            </div> */}
-            <div className="form-group col-md">
-              <label htmlFor="numero">Número</label>
-              <IMaskInput
-                mask={PhoneMask}
-                className="form-control"
-                id="numero"
-                name="numero"
-                min={16}
-                placeholder="Ex.: (41) 9 9876-5432"
-                value={numero}
-                onAccept={(value) => setNumero(value)}
-                required
-              />
-            </div>
-            <div className="form-group col-md">
-              <label htmlFor="email">Email</label>
-              <IMaskInput
-                mask={EmailMask}
-                className="form-control"
-                name="email"
-                id="email"
-                placeholder="exemplo@exemplo.com"
-                value={email}
-                onAccept={(value, mask) => {
-                  setEmail(value);
-                  console.log(mask);
-                }}
-              />
-            </div>
-          </div>
-          <div className="d-flex form-row row justify-content-center mt-4">
-            <div className="form-group col-md-3">
-              <label htmlFor="celula">Célula (líder)</label>
-              <IMaskInput
-                mask={String}
-                className="form-control"
-                name="celula"
-                id="celula"
-                value={celula}
-                onAccept={(value) => setCelula(value)}
-              />
-            </div>
-            <div className="form-row row col-md align-items-center">
-              <div className="form-check form-group form-check-inline col row ">
-                {/* <Form.Check checked={checked1} onChange={handleCheck1Change} /> */}
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  name="b"
-                  id="b"
-                  value={b}
-                  checked={b}
-                  onChange={(e) => setB(!b)}
-                />
-                <label className="form-check-label" htmlFor="b">
-                  Batisado
-                </label>
-              </div>
-              <div className="form-check form-group form-check-inline col row ">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  name="d"
-                  id="d"
-                  value={d}
-                  checked={d}
-                  onChange={(e) => setD(!d)}
-                />
-                <label className="form-check-label" htmlFor="d">
-                  2
-                </label>
-              </div>
-              <div className="form-check form-group form-check-inline col row ">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  name="cdo"
-                  id="cdo"
-                  value={cdo}
-                  checked={cdo}
-                  onChange={(e) => {
-                    setCdo(!cdo);
-                    console.log(!cdo);
-                  }}
-                />
-                <label className="form-check-label" htmlFor="cdo">
-                  Casa do Oleiro
-                </label>
-              </div>
-            </div>
-          </div>
-          <div className="form-row row checkboxes-row">
-            <div className="form-group col-sm-2">
-              <label>Áreas:</label>
-            </div>
-            <div className="form-group col-sm">
-              <ul>
-                <li>
-                  <input
-                    type="checkbox"
-                    id="qualidade"
-                    name="area"
-                    value={"Qualidade"}
-                  />
-                  <label className="form-check-label" htmlFor="qualidade">
-                    Qualidade Total
-                  </label>
-                </li>
-                <li>
-                  <input
-                    type="checkbox"
-                    id="lideranca"
-                    name="area"
-                    value={"Liderança"}
-                  />
-                  <label className="form-check-label" htmlFor="lideranca">
-                    Liderança
-                  </label>
-                </li>
-                <li>
-                  <input
-                    type="checkbox"
-                    id="intercessao"
-                    name="area"
-                    value={"Intercessão"}
-                  />
-                  <label className="form-check-label" htmlFor="intercessao">
-                    Intercessão
-                  </label>
-                </li>
-                <li>
-                  <input
-                    type="checkbox"
-                    id="comunicacao"
-                    name="area"
-                    value={"Comunicação"}
-                  />
+  const handleAddArea = () => {
+    var temp = [...areas];
 
-                  <label className="form-check-label" htmlFor="comunicacao">
-                    comunicação
-                  </label>
-                </li>
-                <li>
-                  <input
-                    type="checkbox"
-                    id="fotografia"
-                    name="area"
-                    value={"Fotografia"}
-                  />
-                  <label className="form-check-label" htmlFor="fotografia">
-                    Fotografia
-                  </label>
-                </li>
-                <li>
-                  <input
-                    type="checkbox"
-                    id="stories"
-                    name="area"
-                    value={"Stories"}
-                  />
-                  <label className="form-check-label" htmlFor="stories">
-                    Stories
-                  </label>
-                </li>
-                <li>
-                  <input
-                    type="checkbox"
-                    id="recepcao"
-                    name="area"
-                    value={"Recepção"}
-                  />
-                  <label className="form-check-label" htmlFor="recepcao">
-                    Recepção
-                  </label>
-                </li>
-              </ul>
+    temp.push(areasList.find((e) => !areas.includes(e)));
+
+    setAreas(temp);
+  }
+
+  const handleChangeArea = (oldArea, newarea) => {
+    var temp = [...areas];
+    const index = temp.indexOf(oldArea);
+
+    temp[index] = newarea.target.value;
+
+    setAreas(temp);
+  }
+
+  const handleAddInterview = (newinterviewarea) => {
+    if(!interviews.includes(newinterviewarea)){
+      var temp = [...interviews];
+      temp.push(newinterviewarea);
+      setInterviews(temp);
+    }     
+  }
+
+  const deleteArea = (area) => {
+    var temp = [...areas];
+    var tempInterviews = [...interviews];
+    const index = temp.indexOf(area);
+    const indexInterview = tempInterviews.indexOf(area);
+    temp.splice(index, 1)
+    tempInterviews.splice(indexInterview, 1)
+    setAreas(temp);
+    setInterviews(tempInterviews);
+  } 
+
+  return (
+    <div className="new-volunteers-container" style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
+      <div className="dashboard-content-header" style={{marginBottom: 30}}>
+        {volunteer ? <h2>Editar {volunteer.nome}</h2> : <h2>Novo Voluntário</h2>}
+      </div>
+      <form className="d-flex align-items-center newvolunt-form" method="post" style={{flex: 1, display: 'flex', flexDirection: 'column'}}>
+        <div className="form-container" style={{width: '100%', height: '100%', flex: 1, display: 'flex', flexDirection: 'column'}}>
+          
+          <div style={{flex: 1}}>
+            <div className="form-row row">
+              <div className="form-group col-md">
+                <label htmlFor="nome">Nome</label>
+                <input
+                  defaultValue={volunteer?.nome}
+                  type="text"
+                  name="nome"
+                  id="nome"
+                  placeholder="Nome"
+                  ref={name}
+                  required
+                />
+              </div>
+              <div className="form-group col-md">
+                <label htmlFor="sexo">Sexo</label>
+                <select
+                  defaultValue={volunteer?.sexo}
+                  name="sexo"
+                  id="sexo"
+                  ref={gender}
+                  required
+                >
+                  <option defaultValue>Escolha...</option>
+                  <option>Masculino</option>
+                  <option>Feminino</option>
+                </select>
+              </div>
+              <div className="form-group col-sm-3">
+                <label htmlFor="nascimento">Nascimento</label>
+                <input 
+                  defaultValue={volunteer?.nascimento}
+                  type="date" id="nascimento" name="nascimento" ref={birthday}/>
+              </div>
             </div>
-            <div className="form-group col-sm">
-              <ul>
-                <li>
-                  <input
+
+            <div className="form-row row mt-4">
+              <div className="form-group col-md">
+                <label htmlFor="numero">Número</label>
+                <IMaskInput
+                  mask={PhoneMask}
+                  defaultValue={volunteer?.numero}
+                  id="numero"
+                  name="numero"
+                  min={16}
+                  placeholder="Ex.: (41) 9 9876-5432"
+                  ref={cellphone}
+                  required
+                />
+              </div>
+              <div className="form-group col-md">
+                <label htmlFor="email">Email</label>
+                <IMaskInput
+                  mask={EmailMask}
+                  defaultValue={volunteer?.email}
+                  name="email"
+                  id="email"
+                  placeholder="exemplo@exemplo.com"
+                  ref={email}
+                />
+              </div>
+              <div className="form-group col-md-3">
+                <label htmlFor="celula">Líder de Célula</label>
+                <IMaskInput
+                  mask={String}
+                  defaultValue={volunteer?.celula}
+                  name="celula"
+                  id="celula"
+                  ref={smallgroup}
+                />
+              </div>
+            </div>
+
+            <div className="labelSelector" style={{display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'space-between', marginTop: 30}}>         
+                  <label className="form-check-label">
+                    <input
+                    className="form-check-input"
                     type="checkbox"
-                    id="libertacao"
-                    name="area"
-                    value={"Libertação"}
-                  />
-                  <label className="form-check-label" htmlFor="libertacao">
-                    Libertação
+                    name="member"
+                    id="member"
+                    ref={member}
+                    />Já é Membro
                   </label>
-                </li>
-                <li>
-                  <input
+
+                  <label className="form-check-label">
+                    <input
+                    className="form-check-input"
                     type="checkbox"
-                    id="integracao"
-                    name="area"
-                    value={"Integração"}
-                  />
-                  <label className="form-check-label" htmlFor="integracao">
-                    Integração
+                    name="baptized"
+                    id="baptized"
+                    ref={baptized}
+                    />Batizado
                   </label>
-                </li>
-                <li>
-                  <input
+                
+                  <label className="form-check-label">
+                    <input
+                    className="form-check-input"
                     type="checkbox"
-                    id="libras"
-                    name="area"
-                    value={"Libras"}
-                  />
-                  <label className="form-check-label" htmlFor="libras">
-                    Libras
+                    name="escola"
+                    id="escola"
+                    ref={escola}
+                    />Escola de Servos
                   </label>
-                </li>
-                <li>
-                  <input type="checkbox" id="kids" name="area" value={"kids"} />
-                  <label className="form-check-label" htmlFor="kids">
-                    Kids
+                  
+                  <label className="form-check-label">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      name="cdo"
+                      defaultChecked={volunteer?.cdo}
+                      id="cdo"
+                      ref={cdo}
+                      /> Casa do Oleiro
                   </label>
-                </li>
-                <li>
-                  <input
-                    type="checkbox"
-                    id="acessivel"
-                    name="area"
-                    value={"Acessível"}
-                  />
-                  <label className="form-check-label" htmlFor="acessivel">
-                    Acessível
+
+                  <label className="form-check-label">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      name="dna"
+                      id="dna"
+                      ref={dna}
+                      /> DNA
                   </label>
-                </li>
-                <li>
-                  <input
-                    type="checkbox"
-                    id="transito"
-                    name="area"
-                    value={"Trânsito"}
-                  />
-                  <label className="form-check-label" htmlFor="transito">
-                    Trânsito
-                  </label>
-                </li>
-                <li>
-                  <input
-                    type="checkbox"
-                    id="ldc"
-                    name="area"
-                    value={"Líder de Célula"}
-                  />
-                  <label className="form-check-label" htmlFor="ldc">
-                    Lider de Célula
-                  </label>
-                </li>
-              </ul>
+            </div>
+
+            <div className="form-row row checkboxes-row">
+              <div className="form-group col-sm-2">
+                <label>Áreas:</label>
+              </div>
+              {areas.map((area)=>(
+                <>
+                <div style={{display: 'flex', flexDirection: 'row', marginTop: 10, alignItems: 'center'}}>
+                  <div style={{flex: 1}}>
+                    <select value={area} name="area" style={{marginTop: 0}} onChange={(newarea) => handleChangeArea(area, newarea)} >
+                      {areasList.map((areaFromList)=>(
+                        !areas.includes(areaFromList) || areaFromList == area ? <option value={areaFromList}>{areaFromList}</option> : null
+                      ))}
+                    </select>
+                  </div>
+                  <div style={{height: '100%'}}>
+                    <label className="form-check-label" style={{height: '100%', paddingInline: 16, display: 'flex', alignItems: 'center'}}>
+                      <input
+                        onChange={()=>handleAddInterview(area)}
+                        className="form-check-input"
+                        type="checkbox"
+                        name="cdo"
+                        id="cdo"
+                        /> Já fez a entrevista com o Líder
+                    </label>
+                  </div>
+                  { areas.length > 1 ? <div onClick={()=>deleteArea(area)} style={{display: 'flex', margin: 5, justifyContent: 'center', transform: 'rotate(45deg)', cursor: 'pointer'}}><svg viewBox="0 0 24 24" width="24" height="24" stroke="#888888" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></div>
+                  : null}
+                </div>
+                </>
+              ))}
+              <div className="addArea" onClick={handleAddArea}>
+                <div style={{marginRight: 10}}>Adicionar Área</div>
+                  <div style={{display: 'flex', justifyContent: 'center'}}><svg viewBox="0 0 24 24" width="24" height="24" stroke="#888888" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></div>
+                </div>
             </div>
           </div>
-          <div className="form-row row">
-            <div className="col">
-              <Link to="/" className="btn btn-secondary">
-                Fechar
-              </Link>
-            </div>
-            <div className="col">
-              <button
-                type="submit"
-                className="btn btn-primary"
-                onClick={handleOnSubmit}
-              >
-                Cadastrar
-              </button>
+
+
+          <div style={{marginBlock: 30}}>
+            <div className="form-row row" style={{marginTop: 20}}>
+              <div className="col">
+                <div onClick={closeModal} to="/voluntarios" className="btn btn-secondary">
+                  Cancelar
+                </div>
+              </div>
+              <div className="col">
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  onClick={handleOnSubmit}
+                >
+                  { volunteer ? "Atualizar": "Cadastrar"}
+                </button>
+              </div>
             </div>
           </div>
+
+
         </div>
       </form>
-    </>
+    </div>
   );
 }
 

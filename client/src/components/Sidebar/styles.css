@@ -6,7 +6,6 @@
     display: flex;
     justify-content: center;
     position: sticky;
-    background: white;
 }
 
 .sidebar-logo-container {
@@ -33,12 +32,12 @@
 
 .sidebar-item {
     height: 48px;
+    width: 200px;
     margin-top: 5px;
     margin-bottom: 5px;
-    border-radius: 10px;
-    padding: 1.5em;
-    padding-left: 2em;
-    padding-right: 2em;
+    border-radius: 12px;
+    padding-block: 24px;
+    padding-left: 20px;
     display: flex;
     color: #000000;
     list-style: none;
@@ -46,40 +45,38 @@
     align-items: center;
     justify-content: flex-start;
     cursor: pointer;
+    border: solid 1px transparent;
 }
 
-.sidebar-item:hover, .sidebar-item-active:hover {
-    background: #FFECE6;
+.sidebar-item:not(.sidebar-item-active):hover {
+    background: var(--background-color-input);
+    border: var(--border);
+    box-sizing: border-box;
     border-radius: 10px;
     color: #FC7225;
 }
 
 .sidebar-item-active {
-    height: 48px;
-    margin-top: 5px;
-    margin-bottom: 5px;
     background: #FFECE6;
-    border-radius: 10px;
-    padding: 1.5em;
-    padding-left: 2em;
-    padding-right: 2em;
-    display: flex;
-    color: #FC7225;
-    list-style: none;
-    text-decoration: none;
-    align-items: center;
-    justify-content: flex-start;
-    cursor: pointer;
+}
+
+.sidebar-item:not(.sidebar-item-active) img{
+    filter: invert(1);
+}
+
+
+.sidebar-item span{
+    font-size: 16px;
+    font-weight: 600;
+    margin-left: 15px;
+}
+
+.sidebar-item-active span{
+    color: var(--background-color-darker) !important;
 }
 
 .sidebar-item-icon {
     width: 20px;
-}
-
-.sidebar-item-label {
-    font-size: small;
-    font-weight: 600;
-    margin-left: 15px;
 }
 
 /* Footer */
@@ -144,7 +141,6 @@ h1 {
 .menu {
     margin-left: -102px;
     padding-top: 180px;
-    font-family: Poppins, sans-serif;
 }
 
 .logo-cva {
@@ -155,7 +151,6 @@ h1 {
 
 .menu-text {
     color: #5e5d5d;
-    font-family: Poppins, sans-serif;
     font-style: normal;
     font-weight: 400;
     font-size: 15px;
@@ -240,7 +235,6 @@ h1 {
 
 
 .bem-vindo {
-    font-family: 'Poppins', sans-serif;
     font-size: 14px;
 }
 

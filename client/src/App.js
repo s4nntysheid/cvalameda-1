@@ -21,18 +21,6 @@ import NewVoluntario from "./pages/NewVoluntario";
 import UserPage from "./pages/UserPage";
 import Dashboard from "./pages/Dashboard";
 
-/* import bodyParser from "body-parser";
-import express from "express";
-const app = express();
-const cors = require("cors");
-app.use(cors());
-app.use(bodyParser.json());
-app.get("/testeeeeee", (req, resp) => {
-  resp.send("App is Working");
-});
-
- */
-
 function App() {
   //const navigate = useNavigate();
   const [authorized, setAuthorized] = useState(false);
@@ -53,14 +41,13 @@ function App() {
       //localStorage.getItem("token") ? flag=true : flag=false
 
       axios
-        .post("/authenticate", {
+        .post("/api/authenticate", {
           token: localStorage.getItem("token"),
         })
         .then((result) => {
           let jsonResult = result.data;
           if (jsonResult.success === true) {
             localStorage.setItem("token", jsonResult.token);
-            console.log(true, "né pae");
 
             setAuthToken(jsonResult.token);
             setAuthorized(true);
@@ -81,26 +68,10 @@ function App() {
 
     hasJWT();
   }, [authorized]);
-  /*   const RouteGuard = async () => {
-      if ((await hasJWT()) === true) {
-        console.log("sasssasdf");
-        return (
-          <div className="dashboard-container">
-          <SideBar menu={sidebar_menu} />
-          <div className="dashboard-body">
-            <Outlet />
-          </div>
-        </div>
-      );
-    } else {
-      return <Navigate to="/login" />;
-    }
-  }; */
 
   const RouteGuard = () => {
-    console.log("has", authorized);
     if (authorized === true) {
-      console.log("sasssasdf");
+    //if (true) {
       return (
         <div className="dashboard-container">
           <SideBar menu={sidebar_menu} loggedUser={loggedUser} />
@@ -110,13 +81,9 @@ function App() {
         </div>
       );
     } else {
-      console.log(authorized);
       return (
         <div className="dashboard-container">
           <div className="dashboard-body">
-            <div className="d-flex justify-content-center align-items-center">
-              Loading...
-            </div>
             <Login />
           </div>
         </div>

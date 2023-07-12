@@ -9,9 +9,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fas, faPlus, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 
-import "../styles.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../fontawesome.css";
+import "./css/styles.css";
 
 import order from "../../assets/icons/order.png";
 import filter from "../../assets/icons/filter.png";
@@ -27,12 +27,8 @@ import phoneIcon from "../../assets/icons/phone-icon.png";
 
 import all_voluntarios from "../../constants/voluntarios";
 import { calculateRange, sliceData } from "../../utils/table-pagination";
+import NewVoluntario from "../NewVoluntario";
 
-/* import DoneIcon from "../../assets/icons/done.svg";
-import CancelIcon from "../../assets/icons/cancel.svg";
-import RefundedIcon from "../../assets/icons/refunded.svg"; */
-
-library.add(faTrashCan);
 
 function Voluntarios(props) {
   const [search, setSearch] = useState("");
@@ -40,21 +36,83 @@ function Voluntarios(props) {
   const [voluntarios, setVoluntarios] = useState(allVoluntarios);
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState([]);
-  const [editVoluntario, setEditVoluntario] = useState({});
+  const [selectedVolunteer, setSelectedVolunteer] = useState(null);
+  const [areas, setAreas] = useState(["Qualidade"]);
+  const [areasList, setAreasList] = useState([
+    "Qualidade",
+    "Liderança",
+    "Intercessão",
+    "Comunicação",
+    "Fotografia",
+    "Stories",
+    "Recepção",
+    "Libertação",
+    "Integração",
+    "Libras",
+    "Kids",
+    "Acessível",
+    "Trânsito",
+    "Líder",
+  ]);
 
   /* MODAL 1 */
   const [showModal1, setShowModal1] = useState(false);
 
-  const handleCloseModal1 = () => setShowModal1(false);
-  const handleShowModal1 = () => setShowModal1(true);
+  const handleCloseModal1 = () => {
+    setShowModal1(false);
+  };
 
-  /* MODAL 2 */
+  const handleShowModal1 = (volunteer) => {
+    setSelectedVolunteer(volunteer);
+    setShowModal1(true);
+  };
+
+  const handleNewVolunteer = () => {
+    console.log("Teste")
+    setSelectedVolunteer(null);
+    setShowModal1(true);
+  }
+
+  const handleAddArea = () => {
+    var temp = [...selectedVolunteer.area];
+
+    temp.push(areasList.find((e) => !areas.includes(e)));
+
+    setSelectedVolunteer({
+      ...selectedVolunteer,
+      area: temp,
+    });
+  };
+
+  const handleChangeArea = (oldArea, newarea) => {
+    var temp = [...selectedVolunteer.area];
+    const index = temp.indexOf(oldArea);
+
+    temp[index] = newarea.target.value;
+
+    setSelectedVolunteer({
+      ...selectedVolunteer,
+      area: temp,
+    });
+  };
+
+  const deleteArea = (area) => {
+    var temp = [...selectedVolunteer.area];
+    const index = temp.indexOf(area);
+    temp.splice(index, 1);
+    setSelectedVolunteer({
+      ...selectedVolunteer,
+      area: temp,
+    });
+  };
+
+  /* MODAL 3 */
   const [showModal3, setShowModal3] = useState(false);
 
   const handleCloseModal3 = () => setShowModal3(false);
   const handleShowModal3 = () => setShowModal3(true);
 
-  const handleEditVoluntario = (voluntario) => setEditVoluntario(voluntario);
+  //const handleselectedVolunteer = (voluntario) => setselectedVolunteer(voluntario);
 
   const voluntPages = 50;
 
@@ -67,14 +125,11 @@ function Voluntarios(props) {
             props.loggedUser.areas.includes(area.toLowerCase())
           )
         );
-        console.log(filteredVoluntarios);
         setAllVoluntarios(filteredVoluntarios);
         setVoluntarios(sliceData(filteredVoluntarios, page, voluntPages));
         setPagination(calculateRange(filteredVoluntarios, voluntPages));
       }
     }
-    /* setPagination(calculateRange(allVoluntarios, voluntPages));
-    setVoluntarios(sliceData(allVoluntarios, page, voluntPages)); */
   }, [page, props]);
 
   const handleOnClickRefresh = (event) => {
@@ -110,82 +165,14 @@ function Voluntarios(props) {
     setVoluntarios(sliceData(allVoluntarios, new_page, voluntPages));
   };
 
-  const voluntaryAreas = editVoluntario.area;
-
   return (
     <div className="dashboard-content">
       {/* MODAL 1 */}
-      <Modal show={showModal1} onHide={handleCloseModal1}>
-        <Modal.Header closeButton>
-          <Modal.Title>{editVoluntario.nome}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <div className="container-content">
-            <form>
-              <div className="contact-container">
-                <div className="contact">
-                  <img src={emailIcon} alt=" email-icon" className="email" />
-                  <span>{editVoluntario.email}</span>
-                </div>
-                <div className="contact">
-                  <img src={phoneIcon} alt="phone-icon" className="cell" />
-                  <span>{editVoluntario.numero}</span>
-                </div>
-              </div>
-              <div className="content-area">
-                <div className="d-flex justify-content-between title-img">
-                  <div className="mx-2 my-3">
-                    <img
-                      src={triangleIcon}
-                      alt="areas-icon"
-                      className="triangle"
-                    />
-                    <span className="my-auto mx-2">Áreas</span>
-                  </div>
-                  <div className="mx-2 my-auto">
-                    <FontAwesomeIcon icon={faPlus} />
-                  </div>
-                </div>
-                {console.log(voluntaryAreas)}
-
-                {editVoluntario.area !== undefined ? (
-                  editVoluntario.area.map((a, index) => {
-                    return (
-                      <div key={index}>
-                        {console.log(a)}
-                        <hr />
-                        <div className="d-flex flex-row justify-content-between mx-2 m1rem">
-                          <div className="mx-2 my-2">
-                            <p className="">{a}</p>
-                          </div>
-                          <div className="mx-2 my-auto">
-                            
-                            <i class="fa-solid fa-trash" ></i>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })
-                ) : (
-                  <p>Carregando...</p>
-                )}
-              </div>
-            </form>
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseModal1}>
-            Cancelar
-          </Button>
-          <Button
-            variant="primary"
-            className={"save"}
-            onClick={handleCloseModal1}
-          >
-            Editar
-          </Button>
-        </Modal.Footer>
-      </Modal>
+        <Modal show={showModal1} onHide={handleCloseModal1}>
+          <Modal.Body>
+            <NewVoluntario closeModal={handleCloseModal1} volunteer={selectedVolunteer} />
+          </Modal.Body>
+        </Modal>
 
       {/* MODAL 2 */}
       {/* <Modal show={showModal3} onHide={handleCloseModal3}>
@@ -330,10 +317,10 @@ function Voluntarios(props) {
               <img alt="agrupar" src={group} />
               <span className="uper-span"><strong className="bt-text">Agrupar por</strong></span>
             </button> */}
-            <Link className="right-button-orange" to="/novovoluntario">
+            <div style={{cursor: 'pointer'}} onClick={handleNewVolunteer} className="right-button-orange">
               <img alt="novo voluntario" src={cross} />
               {/* <span className="uper-span"><strong className="bt-text">Novo Voluntário</strong></span> */}
-            </Link>
+            </div>
           </div>
         </div>
         {voluntarios.length !== 0 ? (
@@ -351,14 +338,21 @@ function Voluntarios(props) {
                 </button>
               </div>
             </div>
-            <table>
-              <tbody>
+            <table style={{ fontWeight: 300 }}>
+              <thead>
+                <tr>
+                  <th>Nomes</th>
+                  <th>Áreas</th>
+                  <th>Email</th>
+                  <th>Telefone</th>
+                </tr>
+              </thead>
+              <tbody style={{ width: "100%" }}>
                 {voluntarios.map((voluntario, index) => (
                   <tr
                     key={index}
                     onClick={() => {
-                      handleShowModal1();
-                      handleEditVoluntario(voluntario);
+                      handleShowModal1(voluntario);
                     }}
                   >
                     {/* <td className="idT">

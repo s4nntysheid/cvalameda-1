@@ -44,7 +44,7 @@ function NewArea() {
     e.preventDefault();
 
 
-    var result = await fetch("/newvoluntary", {
+    var result = await fetch("/api/newvoluntary", {
       method: "POST",
       body: JSON.stringify({
         nome: nome,

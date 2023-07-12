@@ -1,10 +1,58 @@
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap');
+/* font-family*/
+@import url("https://fonts.googleapis.com/css2?family=Montserrat&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
-body {
-    font-family: "Inter", "Montserrat", sans-serif !important;
-    letter-spacing: -0.4px;
+*{
+    --background-color-darker: #ffffff;
+    --background-color-medium: #f8f8f8;
+    --background-color-input: #dadada;
+    --border: 1px solid rgba(0, 0, 0, 0.021);
+    --border-focus: 1px solid hsla(0,0%,100%,.3);
+    --text-color: #000000;
+    --shadow: rgba(0, 0, 0, 0.123);
 }
 
+
+@media (prefers-color-scheme: dark) {
+    *{
+        --background-color-darker: #0d0d0d;
+        --background-color-medium: #1c1c1e;
+        --background-color-input: #323234;
+        --border: 1px solid hsla(0,0%,100%,.04);
+        --border-focus: 1px solid hsla(0,0%,100%,.3);
+        --text-color: #ffffff;
+        --shadow: rgba(0,0,0,.6);
+    }
+}
+
+
+
+body {
+  margin: 0;
+  font-family: "Inter", "Manrope", sans-serif;
+  letter-spacing: -0.4px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--background-color-darker);
+}
+
+h2{
+    letter-spacing: -1px;
+}
+
+
+.card {
+    background-color: var(--background-color-medium);
+    border: var(--border);
+    border-radius: 14px;
+    box-shadow: 0 5px 10px rgba(0,0,0,.15);
+    height: -webkit-fit-content;
+    height: -moz-fit-content;
+    height: fit-content;
+    margin: 20px;
+    padding: 20px;
+}
 
 .dashboard-container {
     display: flex;
@@ -15,3 +63,16 @@ body {
     display: flex;
     flex-direction: column;
 }
+
+.modal-content{
+    background-color: var(--background-color-medium) !important;
+}
+
+
+.card{
+    background: var(--background-color-medium);
+    border-radius: 20px;
+    border: var(--border);
+    padding: 30px;
+    box-shadow: 0 4px 16px var(--shadow);
+  }

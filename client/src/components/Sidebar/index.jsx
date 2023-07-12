@@ -30,29 +30,21 @@ function SideBar({ menu, loggedUser }) {
       <div>
         <div className="side-bar">
           <div className="logo-cva">
-            <img src={logo} alt={`icon-logo`} />
+            <img src={logo} alt={`icon-logo`} width={130} />
           </div>
           <div className="menu">
             <div className="buttons-menu">
               {menu.map((item, index) => {
-                if (item.onlyAdmins === true) {
-                  if (loggedUser.isAdmin) {
-                    console.log("renderiza o bglh");
-                    return (
-                      <div key={index} onClick={() => __navigate(item.id)}>
-                        <SideBarItem active={item.id === active} item={item} />
-                      </div>
-                    );
-                  } else {
+                if(item.onlyAdmins === true){
+                  if(!loggedUser.isAdmin){
                     return null;
                   }
-                } else {
-                  return (
-                    <div key={index} onClick={() => __navigate(item.id)}>
-                      <SideBarItem active={item.id === active} item={item} />
-                    </div>
-                  );
                 }
+                return (
+                  <div key={index} onClick={() => __navigate(item.id)}>
+                    <SideBarItem active={item.id === active} item={item} />
+                  </div>
+                );
               })}
             </div>
           </div>
